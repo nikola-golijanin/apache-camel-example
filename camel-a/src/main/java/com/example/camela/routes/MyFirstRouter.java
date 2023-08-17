@@ -1,5 +1,7 @@
 package com.example.camela.routes;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,7 @@ public class MyFirstRouter extends RouteBuilder {
                 //Transformation changes body of the message
                 .bean(getCurrentTimeBean, "getCurrentTime")
                 .bean(simpleLoggingProcessingComponent)
+                .process(new SimpleLoggingProcessor())
                 .to("log:first-timer");
     }
 }
@@ -56,5 +59,14 @@ class SimpleLoggingProcessingComponent {
     public void process(String message) {
         logger.info("Simple message {}",message);
     }
+}
 
+class SimpleLoggingProcessor implements Processor {
+
+    private Logger logger = LoggerFactory.getLogger(SimpleLoggingProcessor.class);
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        logger.info("SimpleLogging Processor{}",exchange);
+    }
 }
